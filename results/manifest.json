@@ -1,0 +1,10 @@
+{
+  "quizzes": [
+    {
+      "title": "Demo Community Quiz 2026",
+      "date": "Saturday, 1 August 2026",
+      "venue": "Community Hall",
+      "file": "results/demo-snapshot.json"
+    }
+  ]
+}
