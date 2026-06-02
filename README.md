@@ -240,8 +240,10 @@ npm run deploy                 # commits with a dated message, then pushes
 npm run deploy -- "your note"  # custom commit message
 ```
 
-It is a no-op if nothing changed, so it is safe to run any time. The live wizard
-lands at `https://<you>.github.io/quiz-runner/`.
+The build stamps a fresh "generated at" time into the sample quiz, so a deploy
+normally produces one commit; it only skips the push if there is genuinely
+nothing staged (e.g. re-running after a push that already went through). The live
+wizard lands at `https://<you>.github.io/quiz-runner/`.
 
 ---
 
