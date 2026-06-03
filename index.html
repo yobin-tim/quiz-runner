@@ -111,6 +111,7 @@
 </div>
 <script>
 // Populate the past-quizzes list from results/manifest.json.
+// Each entry can have: title, date, venue, file (results JSON), playUrl (playable HTML).
 (function () {
   const list = document.getElementById('past-quizzes-list');
   if (!list) return;
@@ -123,22 +124,43 @@
         return;
       }
       quizzes.forEach((q) => {
-        const a = document.createElement('a');
-        a.href = 'results.html?src=' + (q.file || '');
-        a.style.cssText = 'display:block;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px;transition:border-color 0.12s,transform 0.08s;';
-        a.onmouseenter = () => { a.style.borderColor = 'var(--blue)'; a.style.transform = 'translateY(-1px)'; };
-        a.onmouseleave = () => { a.style.borderColor = 'var(--border)'; a.style.transform = ''; };
+        // Use a div rather than an <a> so we can put multiple links inside.
+        const card = document.createElement('div');
+        card.style.cssText = 'background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px;';
+
         const title = document.createElement('div');
         title.style.cssText = 'font-weight:600;color:var(--blue);font-size:15px;';
         title.textContent = q.title || q.file;
-        a.appendChild(title);
+        card.appendChild(title);
+
         if (q.date || q.venue) {
           const meta = document.createElement('div');
           meta.style.cssText = 'font-size:13px;color:var(--text-soft);margin-top:3px;';
           meta.textContent = [q.date, q.venue].filter(Boolean).join(' · ');
-          a.appendChild(meta);
+          card.appendChild(meta);
         }
-        list.appendChild(a);
+
+        // Link row: "Play →" and/or "Results →" depending on what the entry has.
+        const links = document.createElement('div');
+        links.style.cssText = 'margin-top:10px;display:flex;gap:14px;';
+        const linkStyle = 'font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;';
+        if (q.playUrl) {
+          const play = document.createElement('a');
+          play.href = q.playUrl;
+          play.style.cssText = linkStyle;
+          play.textContent = 'Play →';
+          links.appendChild(play);
+        }
+        if (q.file) {
+          const results = document.createElement('a');
+          results.href = 'results.html?src=' + q.file;
+          results.style.cssText = linkStyle;
+          results.textContent = 'Results →';
+          links.appendChild(results);
+        }
+        if (links.children.length) card.appendChild(links);
+
+        list.appendChild(card);
       });
     })
     .catch(() => { /* no manifest — list stays empty */ });
