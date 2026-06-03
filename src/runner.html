@@ -1160,7 +1160,8 @@ function saveSnapshotToFile() {
       schema: 2,
       title: DATA.event.title,
       savedAt: new Date().toISOString(),
-      event: { title: DATA.event.title, dateLong: DATA.event.dateLong || '', venue: DATA.event.venue || '' },
+      event: { title: DATA.event.title, dateLong: DATA.event.dateLong || '', venue: DATA.event.venue || '',
+               penaltyPerTeam: DATA.event.tiebreakerPenaltyPerTeam != null ? DATA.event.tiebreakerPenaltyPerTeam : 3 },
       categories: DATA.categories.map((c) => ({ name: c.name, shortName: c.shortName, colour: c.colour })),
       points: { original: DATA.event.pointsOriginal, passed: DATA.event.pointsPassed },
       state: state

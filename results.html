@@ -124,12 +124,15 @@ function modelFromSnapshot(snap) {
   // points ranking of everyone else. So we rank purely on round points, show
   // tiebreaker points separately in parentheses, and annotate the winner.
 
-  // The penalty phase covers (participants × 3) questions each. Deriving this
-  // from tbParticipants lets the viewer re-classify picks whose stored phase
-  // field is stale — older runner builds hardcoded the penalty boundary at
-  // qNum <= 3 regardless of how many teams were in the tiebreaker.
+  // The penalty phase covers (participants × penaltyPerTeam) questions.
+  // penaltyPerTeam comes from the snapshot's event block (schema 2+); older
+  // snapshots that omit it default to 3. Deriving the target here lets the
+  // viewer re-classify picks whose stored phase field is stale — older runner
+  // builds hardcoded the penalty boundary at qNum <= 3 regardless of how many
+  // teams were in the tiebreaker.
   const tbParticipantsArr = state.tbParticipants || [];
-  const tbPenaltyTarget = tbParticipantsArr.length >= 2 ? tbParticipantsArr.length * 3 : 0;
+  const tbPenaltyPerTeam = (snap.event && snap.event.penaltyPerTeam != null) ? snap.event.penaltyPerTeam : 3;
+  const tbPenaltyTarget = tbParticipantsArr.length >= 2 ? tbParticipantsArr.length * tbPenaltyPerTeam : 0;
 
   const anyTb = (state.tbPicks && state.tbPicks.length > 0) || state.tbWinnerTeam != null;
 
