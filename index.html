@@ -95,12 +95,16 @@
 
   <section id="past-quizzes" style="margin-top: 36px;">
     <h2 style="color: var(--blue); font-size: 20px; margin: 0 0 12px;">Past quizzes</h2>
-    <p style="color: var(--text-soft); font-size: 14px; margin: 0 0 16px;">
+    <p style="color: var(--text-soft); font-size: 14px; margin: 0 0 6px;">
       Events that have been run with Quiz Runner.
+    </p>
+    <p style="color: var(--text-soft); font-size: 13px; margin: 0 0 16px; line-height: 1.6;">
       To add yours: open a pull request on
-      <a href="https://github.com/yobin-tim/quiz-runner" target="_blank">GitHub</a>
-      with your results snapshot in <code>results/</code> and an entry in
-      <code>results/manifest.json</code>.
+      <a href="https://github.com/yobin-tim/quiz-runner" target="_blank" style="color:var(--blue);font-weight:600;">GitHub</a>.
+      Drop your files in the repo and add an entry to <code>results/manifest.json</code>:<br>
+      &nbsp;·&nbsp; <strong>Results link</strong> — put your snapshot JSON in <code>results/</code> and set <code>"file"</code>.<br>
+      &nbsp;·&nbsp; <strong>Play link</strong> — put your quiz HTML in <code>examples/</code> and set <code>"playUrl"</code>.<br>
+      Both fields are optional; include whichever you have.
     </p>
     <div id="past-quizzes-list" style="display: flex; flex-direction: column; gap: 8px; max-width: 600px;"></div>
   </section>

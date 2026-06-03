@@ -264,9 +264,28 @@ an _Open a snapshot file_ button. It works two ways:
 
   ```json
   { "quizzes": [
-    { "title": "Community Quiz 2026", "date": "1 Aug 2026", "file": "results/community-2026.json" }
+    {
+      "title": "Community Quiz 2026",
+      "date": "1 Aug 2026",
+      "venue": "Community Hall",
+      "file": "results/community-2026.json",
+      "playUrl": "examples/community-2026.html"
+    }
   ] }
   ```
+
+  | Field | Required | Purpose |
+  | ----- | -------- | ------- |
+  | `title` | yes | Displayed as the entry heading. |
+  | `date` | no | Shown below the title. |
+  | `venue` | no | Shown below the title, after the date. |
+  | `file` | no* | Path to the results snapshot JSON — adds a **Results →** link. |
+  | `playUrl` | no* | Path to a playable quiz HTML — adds a **Play →** link. |
+
+  *At least one of `file` or `playUrl` should be present, otherwise the entry shows no links.
+
+  To add your event: open a pull request with any files you want to host (snapshot JSON in
+  `results/`, playable HTML in `examples/`) and the updated `manifest.json`.
 
 Snapshots are self-describing (they embed the event name, category labels, and the
 play order), so the results page renders correctly without the original quiz file.
