@@ -123,8 +123,15 @@ function modelFromSnapshot(snap) {
   // A tiebreaker decides the winner among tied teams but must NOT change the
   // points ranking of everyone else. So we rank purely on round points, show
   // tiebreaker points separately in parentheses, and annotate the winner.
-  const tbWinner = (state.tbWinnerTeam != null) ? state.tbWinnerTeam : null;
-  const anyTb = (state.tbPicks && state.tbPicks.length > 0) || tbWinner != null;
+
+  // The penalty phase covers (participants × 3) questions each. Deriving this
+  // from tbParticipants lets the viewer re-classify picks whose stored phase
+  // field is stale — older runner builds hardcoded the penalty boundary at
+  // qNum <= 3 regardless of how many teams were in the tiebreaker.
+  const tbParticipantsArr = state.tbParticipants || [];
+  const tbPenaltyTarget = tbParticipantsArr.length >= 2 ? tbParticipantsArr.length * 3 : 0;
+
+  const anyTb = (state.tbPicks && state.tbPicks.length > 0) || state.tbWinnerTeam != null;
 
   // Tiebreaker points scored, and which teams took part (those that opened a
   // tiebreaker question — i.e. the teams that were tied).
@@ -134,6 +141,20 @@ function modelFromSnapshot(snap) {
     if (p.originatorTeam != null) tbPlayed[p.originatorTeam] = true;
     if (p.scoringTeam != null) tbPointsBy[p.scoringTeam] = (tbPointsBy[p.scoringTeam] || 0) + (p.points || 0);
   });
+
+  // Use the explicitly declared winner if set; otherwise infer from TB points
+  // among confirmed participants. This handles snapshots saved before the
+  // operator clicked "Declare winner" in the runner.
+  let tbWinner = (state.tbWinnerTeam != null) ? state.tbWinnerTeam : null;
+  if (tbWinner == null && tbParticipantsArr.length >= 2) {
+    let bestTeam = null, bestPts = -1, uniqueLeader = true;
+    tbParticipantsArr.forEach((num) => {
+      const pts = tbPointsBy[num] || 0;
+      if (pts > bestPts) { bestPts = pts; bestTeam = num; uniqueLeader = true; }
+      else if (pts === bestPts) { uniqueLeader = false; }
+    });
+    if (uniqueLeader && bestTeam != null) tbWinner = bestTeam;
+  }
 
   const standings = teams.map((t) => ({
     number: t.number, name: t.name, byCat: byCat[t.number],
@@ -169,14 +190,25 @@ function modelFromSnapshot(snap) {
   });
   const tb = (state.tbPicks || []).slice().sort((a, b) => orderKey(a, a.qNum) - orderKey(b, b.qNum));
   if (tb.length) {
-    const rows = tb.map((p) => ({
-      order: orderKey(p, p.qNum),
-      question: (p.displayLabel || ('TB' + ((p.idx || 0) + 1))) + ' · ' +
-        (p.phase === 'sudden-death' ? ('Sudden death R' + (p.sdRound || '?')) : ('Penalty Q' + p.qNum)),
-      opener: teamLabel(p.originatorTeam),
-      scorer: p.scoringTeam != null ? teamLabel(p.scoringTeam) : null,
-      passed: (p.passedTeams && p.passedTeams.length) || 0, points: p.points || 0
-    }));
+    const rows = tb.map((p) => {
+      // Re-derive phase from participant count rather than the stored phase field.
+      // When tbPenaltyTarget is known, qNum <= target is penalty; beyond is sudden
+      // death. This corrects stale data from runners that hardcoded the boundary at 3.
+      const derivedPhase = (tbPenaltyTarget > 0 && p.qNum != null)
+        ? (p.qNum <= tbPenaltyTarget ? 'penalty' : 'sudden-death')
+        : p.phase;
+      const sdRound = derivedPhase === 'sudden-death'
+        ? (tbPenaltyTarget > 0 ? p.qNum - tbPenaltyTarget : (p.sdRound || '?'))
+        : null;
+      return {
+        order: orderKey(p, p.qNum),
+        question: (p.displayLabel || ('TB' + ((p.idx || 0) + 1))) + ' · ' +
+          (derivedPhase === 'sudden-death' ? ('Sudden death R' + sdRound) : ('Penalty Q' + p.qNum)),
+        opener: teamLabel(p.originatorTeam),
+        scorer: p.scoringTeam != null ? teamLabel(p.scoringTeam) : null,
+        passed: (p.passedTeams && p.passedTeams.length) || 0, points: p.points || 0
+      };
+    });
     groups.push({ label: 'Tiebreaker', rows });
   }
 

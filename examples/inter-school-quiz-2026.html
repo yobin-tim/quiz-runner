@@ -3336,10 +3336,11 @@ function recordPick(scoringTeam, points) {
     // the current TB pool — phase + sdRound are derived at render time.
     if (!state.tbPicks) state.tbPicks = [];
     const qNum = (state.tbQuestionCount || 0) + 1;
+    const penaltyTarget = tbPenaltyQuestionTarget();
     state.tbPicks.push({
       qNum,
-      phase: qNum <= 3 ? 'penalty' : 'sudden-death',
-      sdRound: qNum <= 3 ? null : (qNum - 3),
+      phase: qNum <= penaltyTarget ? 'penalty' : 'sudden-death',
+      sdRound: qNum <= penaltyTarget ? null : (qNum - penaltyTarget),
       category: state.currentCategory,
       idx: state.tbIndex,
       displayLabel: state.tbDisplayLabel,

@@ -93,9 +93,56 @@
     </a>
   </div>
 
+  <section id="past-quizzes" style="margin-top: 36px;">
+    <h2 style="color: var(--blue); font-size: 20px; margin: 0 0 12px;">Past quizzes</h2>
+    <p style="color: var(--text-soft); font-size: 14px; margin: 0 0 16px;">
+      Events that have been run with Quiz Runner.
+      To add yours: open a pull request on
+      <a href="https://github.com/yobin-tim/quiz-runner" target="_blank">GitHub</a>
+      with your results snapshot in <code>results/</code> and an entry in
+      <code>results/manifest.json</code>.
+    </p>
+    <div id="past-quizzes-list" style="display: flex; flex-direction: column; gap: 8px; max-width: 600px;"></div>
+  </section>
+
   <footer>
     Open source (MIT). <a href="https://github.com/yobin-tim/quiz-runner">Source &amp; documentation on GitHub</a>.
   </footer>
 </div>
+<script>
+// Populate the past-quizzes list from results/manifest.json.
+(function () {
+  const list = document.getElementById('past-quizzes-list');
+  if (!list) return;
+  fetch('results/manifest.json')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => {
+      const quizzes = (data && (data.quizzes || data)) || [];
+      if (!Array.isArray(quizzes) || !quizzes.length) {
+        list.innerHTML = '<p style="color:var(--text-soft);font-size:14px;margin:0;">No quizzes listed yet.</p>';
+        return;
+      }
+      quizzes.forEach((q) => {
+        const a = document.createElement('a');
+        a.href = 'results.html?src=' + (q.file || '');
+        a.style.cssText = 'display:block;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px;transition:border-color 0.12s,transform 0.08s;';
+        a.onmouseenter = () => { a.style.borderColor = 'var(--blue)'; a.style.transform = 'translateY(-1px)'; };
+        a.onmouseleave = () => { a.style.borderColor = 'var(--border)'; a.style.transform = ''; };
+        const title = document.createElement('div');
+        title.style.cssText = 'font-weight:600;color:var(--blue);font-size:15px;';
+        title.textContent = q.title || q.file;
+        a.appendChild(title);
+        if (q.date || q.venue) {
+          const meta = document.createElement('div');
+          meta.style.cssText = 'font-size:13px;color:var(--text-soft);margin-top:3px;';
+          meta.textContent = [q.date, q.venue].filter(Boolean).join(' · ');
+          a.appendChild(meta);
+        }
+        list.appendChild(a);
+      });
+    })
+    .catch(() => { /* no manifest — list stays empty */ });
+}());
+</script>
 </body>
 </html>

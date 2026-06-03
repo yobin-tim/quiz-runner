@@ -457,8 +457,8 @@
       },
       {
         "qNum": 4,
-        "phase": "sudden-death",
-        "sdRound": 1,
+        "phase": "penalty",
+        "sdRound": null,
         "category": "Environment and Sustainability",
         "idx": 1,
         "displayLabel": "TB5",
@@ -471,8 +471,8 @@
       },
       {
         "qNum": 5,
-        "phase": "sudden-death",
-        "sdRound": 2,
+        "phase": "penalty",
+        "sdRound": null,
         "category": "Language & Culture",
         "idx": 0,
         "displayLabel": "TB3",
@@ -483,8 +483,8 @@
       },
       {
         "qNum": 6,
-        "phase": "sudden-death",
-        "sdRound": 3,
+        "phase": "penalty",
+        "sdRound": null,
         "category": "Language & Culture",
         "idx": 1,
         "displayLabel": "TB6",
@@ -494,7 +494,7 @@
         "passedTeams": []
       }
     ],
-    "tbWinnerTeam": null,
+    "tbWinnerTeam": 6,
     "presentationMode": false,
     "_draftNames": null,
     "rulesOpenKey": "conduct",
