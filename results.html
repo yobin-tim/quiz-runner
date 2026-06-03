@@ -215,8 +215,11 @@ function modelFromSnapshot(snap) {
     groups.push({ label: 'Tiebreaker', rows });
   }
 
-  // Champion: the tiebreaker winner if there was one, otherwise the top on points.
-  const champion = (tbWinner != null && standings.find((r) => r.number === tbWinner)) || standings[0] || null;
+  // Champion: always the top of standings. The standings sort already floats the
+  // tiebreaker winner to the front of their tied group, so when the TB is for first
+  // place, standings[0] is already the TB winner. When the TB is for a lower place
+  // (e.g. 3rd), standings[0] is the outright points leader — not the TB winner.
+  const champion = standings[0] || null;
 
   return {
     title: (snap.event && snap.event.title) || snap.title || 'Quiz Results',
