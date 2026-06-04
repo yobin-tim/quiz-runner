@@ -300,7 +300,7 @@
             7,
             1
           ],
-          "seq": 32
+          "seq": 39
         },
         "2": {
           "scoringTeam": 6,
@@ -330,7 +330,7 @@
           "passedTeams": [
             4
           ],
-          "seq": 31
+          "seq": 40
         },
         "6": {
           "scoringTeam": 7,
@@ -367,21 +367,21 @@
           "passedTeams": [
             6
           ],
-          "seq": 33
+          "seq": 38
         },
         "12": {
           "scoringTeam": 5,
           "points": 10,
           "originatorTeam": 5,
           "passedTeams": [],
-          "seq": 38
+          "seq": 33
         },
         "13": {
           "scoringTeam": 3,
           "points": 10,
           "originatorTeam": 3,
           "passedTeams": [],
-          "seq": 40
+          "seq": 31
         },
         "15": {
           "scoringTeam": 1,
@@ -402,7 +402,7 @@
             6,
             5
           ],
-          "seq": 39
+          "seq": 32
         }
       }
     },
